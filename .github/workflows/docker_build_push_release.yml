@@ -1,0 +1,72 @@
+on:
+    workflow_call:
+      secrets:
+        GH_TOKEN:
+          required: true
+        AWS_ACCESS_KEY_ID:
+          required: true
+        AWS_SECRET_ACCESS_KEY:
+          required: true
+  
+      inputs:
+        DOCKERFILE:
+          type: string
+          default: "./Dockerfile"
+        REGISTRY:
+          type: string
+          required: true
+        TAGS:
+          type: string
+          required: true
+        VERSION:
+          type: string
+          required: true
+        IMAGE_NAME:
+          type: string
+          required: true
+        push:
+          type: boolean
+          required: true
+  
+jobs:
+    docker-buildpush:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Set up Python 3.9
+          uses: actions/setup-python@v3
+          with:
+            python-version: '3.9'
+        - name: Set up CD
+          uses: actions/checkout@v3
+          with:
+            token: ${{ secrets.GH_TOKEN }}
+            submodules: recursive
+        - name: Set up Docker Qemu
+          uses: docker/setup-qemu-action@v1.2.0
+        - name: Setup Docker Buildx
+          uses: docker/setup-buildx-action@v1.6.0
+        - name: Docker login
+          uses: docker/login-action@v3
+          with:
+            registry: ${{inputs.REGISTRY}}
+            username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        - name: Extract metadata (tags, labels) for Docker
+          id: meta
+          uses: docker/metadata-action@v5.0.0
+          with:
+            images: ${{ inputs.REGISTRY }}/${{ inputs.IMAGE_NAME }}
+            tags: |
+              ${{inputs.TAGS}}
+              type=sha
+        - name: Build and push
+          uses: docker/build-push-action@v6
+          with:
+            context: .
+            file: ${{ inputs.DOCKERFILE }}
+            platforms: linux/amd64
+            push: ${{ inputs.PUSH }}
+            secrets: |
+              "GH_TOKEN=${{ secrets.GH_TOKEN }}"
+            tags: ${{ steps.meta.outputs.tags }}
+            labels: ${{ steps.meta.outputs.labels }}
