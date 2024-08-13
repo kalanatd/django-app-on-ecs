@@ -59,6 +59,8 @@ jobs:
             tags: |
               ${{inputs.TAGS}}
               type=sha
+              type=raw,value=latest
+
         - name: Build and push
           uses: docker/build-push-action@v3.3.1
           with:
@@ -71,4 +73,3 @@ jobs:
             tags: ${{ steps.meta.outputs.tags }}
             labels: ${{ steps.meta.outputs.labels }}
             provenance: false
-

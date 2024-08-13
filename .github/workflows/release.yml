@@ -29,19 +29,6 @@ jobs:
         REGISTRY: 593453040104.dkr.ecr.eu-central-1.amazonaws.com
         IMAGE_NAME: django-app-on-ecs
         PUSH: true
- 
-    # task-definition:
-    #   needs:
-    #     - create-new-tag
-    #     - build-and-push-to-ecr
-    #   if: "(needs.build-and-push-to-ecr.result == 'success') && (needs.create-new-tag.outputs.new_tag != '')"
-    #   uses: kalanatd/django-app-on-ecs/.github/workflows/aws_ecs_task_definition.yml@dev
-    #   secrets:
-    #     GH_TOKEN: ${{ secrets.GH_TOKEN }}
-    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #   with:
-    #     TAG: ${{ needs.create-new-tag.outputs.new_tag }}
         
     delete-tag:
       name: Delete tag whenever build-and-push-to-ecr fails
