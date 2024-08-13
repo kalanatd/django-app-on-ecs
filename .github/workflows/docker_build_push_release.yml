@@ -60,7 +60,7 @@ jobs:
               ${{inputs.TAGS}}
               type=sha
         - name: Build and push
-          uses: docker/build-push-action@v6
+          uses: docker/build-push-action@v3.3.1
           with:
             context: .
             file: ${{ inputs.DOCKERFILE }}
