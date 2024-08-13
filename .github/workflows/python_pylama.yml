@@ -9,7 +9,7 @@ env:
     PYFLAKES_VERSION: 2.4.0
   
 jobs:
-    dash-pylama:
+    pylama:
       runs-on: ubuntu-latest
       container: python:3.9
       steps:

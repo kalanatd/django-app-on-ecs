@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.9-slim
 WORKDIR /app
 ARG UID=10001
 RUN adduser \
@@ -12,7 +12,6 @@ RUN adduser \
 COPY TestApp/requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 USER appuser
-ENV REQUIRED_SETTING='True'
 COPY TestApp/* .
 EXPOSE 8000
 CMD ./start.sh
