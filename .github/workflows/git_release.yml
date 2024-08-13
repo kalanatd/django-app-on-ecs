@@ -15,7 +15,7 @@ on:
           required: true
   
 jobs:
-    dash-create-release:
+    create-release:
       runs-on: ubuntu-latest
       steps:
         - name: Set up Python 3.9

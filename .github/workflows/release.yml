@@ -43,7 +43,7 @@ jobs:
     #   with:
     #     TAG: ${{ needs.create-new-tag.outputs.new_tag }}
         
-    dash-delete-tag:
+    delete-tag:
       name: Delete tag whenever build-and-push-to-ecr fails
       needs:
         - create-new-tag
@@ -60,7 +60,7 @@ jobs:
       needs:
         - build-and-push-to-ecr
         - create-new-tag
-        - dash-delete-tag
+        - delete-tag
       # Only if we have new tag(version), release the new version.
       if: "(needs.build-and-push-to-ecr.result == 'success') && (needs.create-new-tag.outputs.new_tag != '')"
       uses: kalanatd/django-app-on-ecs/.github/workflows/git_release.yml@dev

@@ -36,7 +36,7 @@ jobs:
           uses: actions/setup-python@v3
           with:
             python-version: '3.9'
-        - name: Set up CD
+        - name: Checkout the repo
           uses: actions/checkout@v3
           with:
             token: ${{ secrets.GH_TOKEN }}
@@ -60,7 +60,7 @@ jobs:
               ${{inputs.TAGS}}
               type=sha
         - name: Build and push
-          uses: docker/build-push-action@v6.0.0
+          uses: docker/build-push-action@v3.3.1
           with:
             context: .
             file: ${{ inputs.DOCKERFILE }}
