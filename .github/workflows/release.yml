@@ -2,6 +2,8 @@ on:
     push:
       branches:
         - 'main'
+      paths-ignore:
+        - '**/README.md'
 jobs:
     pylama:
       uses: ./.github/workflows/python_pylama.yml@main

@@ -1,0 +1,61 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore environment files
+.env
+*.env
+
+# Ignore virtual environments
+venv/
+.venv/
+
+# Ignore Django migrations
+**/migrations/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Ignore local configuration
+local_settings.py
+secrets.json
+
+# Ignore compiled files and directories
+*.DS_Store
+*.so
+*.egg
+*.egg-info
+*.plist
+
+# Ignore test and coverage results
+*.cover
+coverage.xml
+.cache
+nosetests.xml
+*.cover
+*.coverage
+.pytest_cache/
+
+# Ignore IDE and editor config files
+.idea/
+.vscode/
+*.iml
+
+# Ignore Docker-related files
+docker-compose.yml
+.dockerignore
+
+# Ignore Git-related files
+.git/
+.gitignore
+./github
+
+# Ignore node modules if you're using any frontend assets managed by npm or yarn
+node_modules/
+
+#Ignore Infrastructure directory
+Infrastructure
