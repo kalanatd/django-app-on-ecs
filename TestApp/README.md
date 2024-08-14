@@ -8,3 +8,6 @@ Running `start.sh` will start the application server on port 8000
 Running `test.sh` will execute the test suite. 
 The environment variable REQUIRED_SETTING must 
 be set to some value for the tests to pass. 
+
+# ALLOWED_HOSTS
+ALLOWED_HOSTS Configuration is changed. 

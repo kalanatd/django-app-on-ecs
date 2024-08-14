@@ -57,5 +57,5 @@ docker-compose.yml
 # Ignore node modules if you're using any frontend assets managed by npm or yarn
 node_modules/
 
-#Ignore Infrastructure directory
+# Ignore Infrastructure directory
 Infrastructure
