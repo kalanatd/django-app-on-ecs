@@ -1,0 +1,24 @@
+on:
+    workflow_call:
+      secrets:
+        GH_TOKEN:
+          required: true
+      inputs:
+        TAG:
+          type: string
+          required: true
+  
+jobs:
+    delete-tag:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Set up files
+          uses: actions/checkout@v3
+          with:
+            token: ${{ secrets.GH_TOKEN }}
+            submodules: recursive
+        - name: Delete previously generated tag
+          if: "${{ inputs.TAG }}"
+          run: |
+            git push --delete origin ${{ inputs.TAG }}
+  

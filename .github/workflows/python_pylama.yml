@@ -1,0 +1,29 @@
+on:
+    workflow_call:
+      secrets:
+        GH_TOKEN:
+          required: true
+  
+env:
+    PYLAMA_VERSION: 7.7.1
+    PYFLAKES_VERSION: 2.4.0
+  
+jobs:
+    pylama:
+      runs-on: ubuntu-latest
+      container: python:3.9
+      steps:
+        - name: Set up files
+          uses: actions/checkout@v3
+          with:
+            token: ${{ secrets.GH_TOKEN }}
+            submodules: recursive
+        - name: install pyflakes
+          run: |
+            pip3 install pyflakes==${{env.PYFLAKES_VERSION}}
+        - name: install pylama
+          run: |
+            pip3 install pylama==${{env.PYLAMA_VERSION}}
+        - name: run pylama
+          run: |
+            pylama .

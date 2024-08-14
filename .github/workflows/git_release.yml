@@ -1,0 +1,34 @@
+on:
+    workflow_call:
+      secrets:
+        GH_TOKEN:
+          required: true
+      inputs:
+        TAG:
+          type: string
+          required: true
+        VERSION:
+          type: string
+          required: true
+        CHANGELOG:
+          type: string
+          required: true
+  
+jobs:
+    create-release:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Set up Python 3.9
+          uses: actions/setup-python@v3
+          with:
+            python-version: '3.9'
+        - uses: actions/checkout@v3
+          with:
+            ref: ${{ github.head_ref }}
+        - name: Create a GitHub release
+          uses: ncipollo/release-action@v1
+          with:
+            tag: ${{ inputs.TAG }}
+            name: Release ${{ inputs.TAG }}
+            body: ${{ inputs.CHANGELOG }}
+  

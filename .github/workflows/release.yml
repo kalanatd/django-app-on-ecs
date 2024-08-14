@@ -1,0 +1,75 @@
+on:
+    push:
+      branches:
+        - 'main'
+jobs:
+    pylama:
+      uses: ./.github/workflows/python_pylama.yml
+      secrets:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    create-new-tag:
+      name: 'Create Git tags'
+      needs: pylama
+      secrets:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      uses: ./.github/workflows/git_tag.yml
+  
+    build-and-push-to-ecr:
+      name: 'Build and push to ECR'
+      needs:
+        - create-new-tag
+      uses: ./.github/workflows/docker_build_push_release.yml
+      secrets:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      with:
+        TAGS: ${{ needs.create-new-tag.outputs.new_tag }}
+        VERSION: ${{ needs.create-new-tag.outputs.release_version }}
+        REGISTRY: 593453040104.dkr.ecr.eu-central-1.amazonaws.com
+        IMAGE_NAME: django-app-on-ecs
+        PUSH: true
+        
+    delete-tag:
+      name: Delete tag whenever build-and-push-to-ecr fails
+      needs:
+        - create-new-tag
+        - build-and-push-to-ecr
+      if: "always() || (needs.build-and-push-to-ecr.result == 'failure')"
+      uses: ./.github/workflows/git_delete_tag.yml
+      with:
+        TAG: ${{ needs.create-new-tag.outputs.new_tag }}
+      secrets:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    deploy-to-ecs:
+      name: 'deploy the latest image to ecs'
+      needs:
+        - build-and-push-to-ecr
+      uses: ./.github/workflows/deploy-to-ecs.yml
+      secrets:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      with:
+        CIDR: 10.100.0.0/16
+        IMAGE: 593453040104.dkr.ecr.us-east-1.amazonaws.com/django-app-on-ecs:latest
+        AWS_REGION: us-east-1
+    
+
+    create-release:
+      name: 'Create GitHub release'
+      needs:
+        - build-and-push-to-ecr
+        - create-new-tag
+        - delete-tag
+        - deploy-to-ecs
+      # Only if we have new tag(version), release the new version.
+      if: "(needs.deploy-to-ecs.result == 'success') && (needs.create-new-tag.outputs.new_tag != '')"
+      uses: ./.github/workflows/git_release.yml
+      secrets:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      with:
+        TAG: ${{ needs.create-new-tag.outputs.new_tag }}
+        VERSION: ${{ needs.create-new-tag.outputs.release_version }}
+        CHANGELOG: ${{ needs.create-new-tag.outputs.changelog }}

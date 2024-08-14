@@ -1,0 +1,57 @@
+name: Create git tag
+
+on:
+  workflow_call:
+    secrets:
+      GH_TOKEN:
+        required: true
+    outputs:
+      new_tag:
+        description: 'New tag created by the workflow.'
+        value: ${{ jobs.create-tag.outputs.new_tag }}
+      release_version:
+        description: 'Release version going to be created.'
+        value: ${{ jobs.create-tag.outputs.new_version }}
+      previous_version:
+        description: 'Previous version created.'
+        value: ${{ jobs.create-tag.outputs.previous_version }}
+      previous_tag:
+        description: 'Previous tag created.'
+        value: ${{ jobs.create-tag.outputs.previous_tag }}
+      release_type:
+        description: 'Type of release created.'
+        value: ${{ jobs.create-tag.outputs.release_type }}
+      changelog:
+        description: 'Release changelog.'
+        value: ${{ jobs.create-tag.outputs.changelog }}
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.tag_version.outputs.new_tag }}
+      new_version: ${{ steps.tag_version.outputs.new_version }}
+      previous_version: ${{ steps.tag_version.outputs.previous_version }}
+      previous_tag: ${{ steps.tag_version.outputs.previous_tag }}
+      release_type: ${{ steps.tag_version.outputs.release_type }}
+      changelog: ${{ steps.tag_version.outputs.changelog }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: false
+          tag_prefix: ''
+          append_to_pre_release_tag: ''
+          release_branches: dev
+
+      - name: Check Output Parameters
+        run: |
+          echo "Got tag name ${{ steps.tag_version.outputs.new_tag }}"
+          echo "Got release version ${{ steps.tag_version.outputs.new_version }}"
+          echo "Got previous version ${{ steps.tag_version.outputs.previous_version }}"
+          echo "Got previous tag ${{ steps.tag_version.outputs.previous_tag }}"
+          echo "Got release type ${{ steps.tag_version.outputs.release_type }}"
+          echo "Got changelog ${{ steps.tag_version.outputs.changelog }}"
