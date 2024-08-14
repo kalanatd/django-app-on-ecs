@@ -1,3 +1,4 @@
+#This Dockerfile runs a simple django application on port 8000 using a non-root user named appuser
 FROM python:3.9-slim
 WORKDIR /app
 ARG UID=10001

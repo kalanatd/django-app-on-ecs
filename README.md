@@ -49,7 +49,3 @@ To replicate this architecture in your environment, you'll need to set up the fo
 ## Notes
 
 - Ensure that the ALLOWED_HOSTS in the Django settings allows the ALB domain names to ensure proper routing of requests.
-
----
-
-This `README.md` now includes details about the Python linting process and automatic tagging based on commit messages, providing a comprehensive overview of the project's setup and deployment process.
