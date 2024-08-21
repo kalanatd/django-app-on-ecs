@@ -45,7 +45,6 @@ jobs:
           default_bump: false
           tag_prefix: ''
           append_to_pre_release_tag: ''
-          release_branches: dev
 
       - name: Check Output Parameters
         run: |
